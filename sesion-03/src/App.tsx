@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react"
+import { Suspense, useState } from "react"
 import { PlatosList } from "./components/PlatosList"
 import LoadingFallback from "./components/LoadingFallback"
 import Buscar from "./components/Buscar" // Importamos el nuevo componente

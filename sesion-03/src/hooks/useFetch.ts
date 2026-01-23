@@ -28,6 +28,7 @@ export function useFetch<T>(url:string){
             throw new Error("Error al cargar los datos")
           }
           const result = await response.json()
+          setError(null)
           setData(result)
         } catch (error:unknown) {
             setError(error as Error)
