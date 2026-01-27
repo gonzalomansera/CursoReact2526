@@ -1,95 +1,63 @@
-import React, { useState } from "react";
-import Boton from "./Boton";
+import { useState, type FormEvent } from 'react'
+import { useAuth } from '../context/AuthContext'
+import { useNavigate } from 'react-router-dom';
 
-interface Credenciales {
-  email: string;
-  password: string;
+const LoginForm = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('')
+    const { login } = useAuth()
+    const navigate = useNavigate()
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault()
+        const esAdmin = login(email, password)
+        navigate(esAdmin ? '/dashboard' : '/home');    
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-100 p-6">
+            {/* Cambiado: rounded-2xl en lugar de 3xl y bordes grisáceos */}
+            <div className="bg-white rounded-2xl shadow-md p-10 w-full max-w-md border border-slate-200">
+                <div className="text-left mb-10">
+                    <h1 className="text-2xl font-bold text-slate-800 mb-1 tracking-tight">Acceso al Sistema</h1>
+                    <p className="text-slate-500 text-sm">Por favor, introduce tus datos.</p>
+                </div>
+
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Email</label>
+                        <input 
+                            type='email' 
+                            value={email} 
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="usuario@dominio.com"
+                            /* Cambiado: bordes más finos y focus en azul */
+                            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all outline-none"
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Contraseña</label>
+                        <input 
+                            type='password' 
+                            value={password} 
+                            onChange={(e) => setPassword(e.target.value)}
+                            placeholder="••••••••"
+                            className="w-full px-4 py-2.5 rounded-lg border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all outline-none"
+                        />
+                    </div>
+
+                    <button 
+                        type="submit"
+                        /* Cambiado: color azul marino y sin sombras de colores */
+                        className="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold py-3 rounded-lg shadow-sm transition-all active:bg-black"
+                    >
+                        Entrar
+                    </button>
+                </form>
+            </div>
+        </div>
+    )
 }
 
-const FormularioLogin = () => {
-  // hooks
-  const [credenciales, setCredenciales] = useState<Credenciales>({
-    email: "",
-    password: "",
-  });
-  const [errores, setErrores] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
-
-  // efectos
-
-  const emailValido = (email: string): boolean => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-  // funciones
-  const validarFormulario = (): boolean => {
-    const posiblesErrores: Credenciales = { email: "", password: "" };
-    if (!credenciales.email.trim()) {
-      posiblesErrores.email = "Error, falta el email";
-    } else if (!emailValido(credenciales.email)) {
-      posiblesErrores.email = "Error, email NO válido";
-    }
-    if (!credenciales.password.trim()) {
-      posiblesErrores.password = "Error, falta el password";
-    } else if (credenciales.password.length <= 6) {
-      posiblesErrores.password = "Error, longitud password inferior a 6";
-    }
-    setErrores(posiblesErrores);
-    return Object.keys(posiblesErrores).length === 0;
-  };
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (validarFormulario()) {
-      console.log("Longin Exitoso", credenciales);
-      alert(`login Exitoso para ${credenciales.email}`);
-    }
-  }
-
-  return (
-    <div className="max-w-md mx-auto p-6 bg-amber-100 rounded-lg shadow">
-      <h2 className="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Email:</label>
-          <input
-            type="email"
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-4"
-            placeholder="tu@email.com"
-            value={credenciales.email}
-            onChange={(e) =>
-              setCredenciales({ ...credenciales, email: e.target.value })
-            }
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-1">Password:</label>
-          <input
-            type={showPassword ? "text" : "password"}
-            className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-4"
-            placeholder="Introduzca el password"
-            value={credenciales.password}
-            onChange={(e) =>
-              setCredenciales({ ...credenciales, password: e.target.value })
-            }
-          />
-        </div>
-        <button type="button" onClick={() => setShowPassword(!showPassword)}>
-          {showPassword ? "🙉" : "🙈"}
-        </button>
-        <div>
-          <Boton
-            tipo="primary"
-            onClick={() => handleSubmit}
-            texto="Enviar"
-            submit={true}
-          />
-        </div>
-        <label htmlFor="">
-          
-        </label>
-      </form>
-    </div>
-  );
-};
-
-export default FormularioLogin;
+export default LoginForm
